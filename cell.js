@@ -1,13 +1,22 @@
-function make2DArray(cols, rows) {
-  var arr = new Array(cols);
-  for (var i = 0; i < arr.length; i++) {
-    arr[i] = new Array(rows);
+function star(x, y, radius1, radius2, npoints) {
+  let angle = TWO_PI / npoints;
+  let halfAngle = angle / 2.0;
+  beginShape();
+  for (let a = 0; a < TWO_PI; a += angle) {
+    let sx = x + cos(a) * radius2;
+    let sy = y + sin(a) * radius2;
+    vertex(sx, sy);
+    sx = x + cos(a + halfAngle) * radius1;
+    sy = y + sin(a + halfAngle) * radius1;
+    vertex(sx, sy);
   }
-  return arr;
+  endShape(CLOSE);
 }
 
-var grid;
-var cols;function Cell(i, j, w) {
+var randomColor;
+
+function Cell(i, j, w) {
+  randomColor = color(random(100,150),random(100,150),random(100,150));
   this.i = i;
   this.j = j;
   this.x = i * w;
@@ -25,26 +34,15 @@ Cell.prototype.show = function() {
   rect(this.x, this.y, this.w, this.w);
   if (this.revealed) {
     if (this.bee) {
-      fill(95);
-      noStroke();
-      rect(this.x + this.w * 0.2,
-              this.y + this.w * 0.5,
-              this.w * 0.7, 
-              this.w * 0.1);
-      rect(this.x + this.w * 0.5,
-              this.y + this.w * 0.2,
-              this.w * 0.1, 
-              this.w * 0.7);
-      ellipse(this.x + this.w * 0.55,
-              this.y + this.w * 0.55,
-              this.w * 0.4);
+      fill(127);
+      star(this.x + this.w * 0.5, this.y + this.w * 0.5, 4, 8, 14);
     } else {
-      fill(230, 230, 255);
+      fill(randomColor);
       rect(this.x, this.y, this.w, this.w);
       if (this.neighborCount > 0) {
         textAlign(CENTER);
         fill(0);
-        text(this.neighborCount, this.x + this.w * 0.5, this.y + this.w - 15);
+        text(this.neighborCount, this.x + this.w * 0.5, this.y + this.w - 6);
       }
     }
   }
@@ -101,99 +99,6 @@ Cell.prototype.floodFill = function() {
       if (!neighbor.bee && !neighbor.revealed) {
         neighbor.reveal();
       }
-    }
-  }
-}
-var rows;
-var w = 45.45;
-
-var notBees = 0;
-var totalBees = Math.floor(Math.random() * 25) + 5;
-
-
-var Lost = false;
-
-
-function setup() {
-  createCanvas(501, 501);
-  cols = floor(width / w);
-  rows = floor(height / w);
-  grid = make2DArray(cols, rows);
-  for (var i = 0; i < cols; i++) {
-    for (var j = 0; j < rows; j++) {
-      grid[i][j] = new Cell(i, j, w);
-    }
-  }
-
-// Pick totalBees spots
-  var options = [];
-  for (var i = 0; i < cols; i++) {
-    for (var j = 0; j < rows; j++) {
-      options.push([i, j]);
-    }
-  }
-
-
-  for (var n = 0; n < totalBees; n++) {
-    var index = floor(random(options.length));
-    var choice = options[index];
-    var i = choice[0];
-    var j = choice[1];
-    
-// Deletes that spot so it's no longer an option
-    options.splice(index, 1);
-    grid[i][j].bee = true;
-  }
-
-
-  for (var i = 0; i < cols; i++) {
-    for (var j = 0; j < rows; j++) {
-      grid[i][j].countBees();
-    }
-  }
-
-}
-
-function gameOver() {
-  for (var i = 0; i < cols; i++) {
-    for (var j = 0; j < rows; j++) {
-      grid[i][j].revealed = true;
-      if (Lost == false) {
-       alert("Game Over");
-        Lost = true;
-    }
-   }
-  }
-}
-
-
-function Win(){
-  alert("You Win! Loading the next level...");    
-  window.location.reload(false);
-  
-}
-
-function mousePressed() {
-  for (var i = 0; i < cols; i++) {
-    for (var j = 0; j < rows; j++) {
-      if (grid[i][j].contains(mouseX, mouseY)) {
-        grid[i][j].reveal();
-        if (grid[i][j].bee) {
-          gameOver();
-        }
-        if (notBees >= (121 - totalBees)) {
-          Win();
-        }
-        }
-      }   
-    }
-}
-
-function draw() {
-  background(179, 179, 255);
-  for (var i = 0; i < cols; i++) {
-    for (var j = 0; j < rows; j++) {
-      grid[i][j].show();
     }
   }
 }

@@ -9,17 +9,16 @@ function make2DArray(cols, rows) {
 var grid;
 var cols;
 var rows;
-var w = 45.45;
+var w = 25;
+var timer = setInterval(timeIt, 1000);
+var counter = 180;
+var seconds, minutes;
 
+var totalBees = Math.floor(Math.random() * 25) + 15;
 var notBees = 0;
-var totalBees = Math.floor(Math.random() * 25) + 5;
-
-
-var Lost = false;
-
 
 function setup() {
-  createCanvas(501, 501);
+  createCanvas(401, 401);
   cols = floor(width / w);
   rows = floor(height / w);
   grid = make2DArray(cols, rows);
@@ -29,7 +28,7 @@ function setup() {
     }
   }
 
-// Pick totalBees spots
+  // Pick totalBees spots
   var options = [];
   for (var i = 0; i < cols; i++) {
     for (var j = 0; j < rows; j++) {
@@ -43,8 +42,7 @@ function setup() {
     var choice = options[index];
     var i = choice[0];
     var j = choice[1];
-    
-// Deletes that spot so it's no longer an option
+    // Deletes that spot so it's no longer an option
     options.splice(index, 1);
     grid[i][j].bee = true;
   }
@@ -58,23 +56,22 @@ function setup() {
 
 }
 
-function gameOver() {
-  for (var i = 0; i < cols; i++) {
-    for (var j = 0; j < rows; j++) {
-      grid[i][j].revealed = true;
-      if (Lost == false) {
-       alert("Game Over");
-        Lost = true;
-    }
-   }
-  }
+function Win(){
+  alert("Você Venceu!");  
+    setTimeout(function(){location.reload()}, 1000);
 }
 
 
-function Win(){
-  alert("You Win! Loading the next level...");    
-  window.location.reload(false);
-  
+
+function gameOver() {
+  alert("Você Perdeu!");
+  stopTimer();
+  for (var i = 0; i < cols; i++) {
+    for (var j = 0; j < rows; j++) {
+      grid[i][j].revealed = true;
+    }
+  }
+  setTimeout(function(){location.reload()}, 1000);
 }
 
 function mousePressed() {
@@ -82,22 +79,49 @@ function mousePressed() {
     for (var j = 0; j < rows; j++) {
       if (grid[i][j].contains(mouseX, mouseY)) {
         grid[i][j].reveal();
+        
+          if (notBees >= (256 - totalBees)) {
+          Win();
+          stopTimer();
+        }
+        
         if (grid[i][j].bee) {
           gameOver();
+          stopTimer();
+      
         }
-        if (notBees >= (121 - totalBees)) {
-          Win();
-        }
-        }
-      }   
+      }
     }
+  }
 }
 
 function draw() {
-  background(179, 179, 255);
+  background(255);
   for (var i = 0; i < cols; i++) {
     for (var j = 0; j < rows; j++) {
       grid[i][j].show();
     }
   }
+  if (counter == 0 ) {
+    alert("Você Perdeu!");
+    window.location.reload();
+  }
+}
+
+function timeIt() {
+  // 1 counter = 1 second
+  if (counter > 0) {
+    counter--;
+  }
+  
+  minutes = floor(counter/60);
+  seconds = counter % 60;
+  
+  // if (counter < 60)
+  var timer = select('#timer')
+  timer.html(nf(minutes,2) + ":" + nf(seconds,2));
+}
+
+function stopTimer() {
+  clearInterval(timer);
 }

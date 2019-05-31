@@ -1,12 +1,29 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/addons/p5.dom.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/addons/p5.sound.min.js"></script>
+<!DOCTYPE html><html><head>
+    <script src="p5.min.js"></script>
+    <script src="p5.dom.min.js"></script>
+    <script src="p5.sound.min.js"></script>
     <script src="sketch.js"></script>
     <script src="cell.js"></script>
   </head>
   <body>
-  </body>
-</html>
+    <div>
+      <h2>
+        <span>Tempo:</span>
+        <span id="timer">03:00</span>
+      </h2>
+    </div>
+    <div>
+      <h2>
+        <span>Bombas:</span>
+        <span id="bombas"></span>
+      </h2>
+    </div>
+    <script>
+function myFunction() {
+  return totalBees;
+}
+
+document.getElementById("bombas").innerHTML = myFunction();
+</script>
+  
+</body></html>
